@@ -1,20 +1,24 @@
-//SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.19;
+
 
 contract Adoption {
     address[16] public adopters;
 
-    // Adopting a pet
-    function adopt(uint petId) public returns (uint) {
-        require(petId >= 0 && petId <= 15);
+    function adopt(uint256 _petId) external {
+        // require(petId >= 0 && petId < adopters.length, "Invalid pet ID");
 
-        adopters[petId] = msg.sender;
-
-        return petId;
+        address adopter = msg.sender;
+        adopters[_petId] = adopter;
     }
 
-    // Retrieving the adopters
-    function getAdopters() public view returns (address[16] memory) {
+    function getAdopters() external view returns (address[16] memory) {
         return adopters;
+    }
+
+    function disown(uint256 _petId) external {
+        // require(petId >= 0 && petId < adopters.length, "Invalid pet ID");
+
+        adopters[_petId] = address(0);
     }
 }

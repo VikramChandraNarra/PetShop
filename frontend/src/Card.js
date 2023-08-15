@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Box.css";
 import { Box, Typography, Button} from "@mui/material";
+import Web3 from "web3";
+import PetDatabaseContract from "./PetDatabase.json";
+import AdoptionContract from "./Adoption.json"
 
-function Card({ name, age, breed, image }) {
+
+function Card({ name, age, breed, image, petIndex, isAvailable}) {
+
+  const [isAdoppted, setIsAdopted] = useState(!isAvailable)
 
   const isValidUrl = (str) => {
     try {
@@ -12,7 +18,89 @@ function Card({ name, age, breed, image }) {
       return false;
     }
   };
-  
+
+  const handleClickAdopt = async () => {
+    try {
+
+      console.log("petIndex:", petIndex)
+      const web3 = new Web3(window.ethereum);
+      await window.ethereum.request({ method: "eth_requestAccounts" });
+
+      const accounts = await web3.eth.getAccounts();
+      const fromAddress = accounts[0];
+
+      const networkId = await web3.eth.net.getId();
+      const deployedNetwork = PetDatabaseContract.networks[networkId];
+      const contract = new web3.eth.Contract(
+        PetDatabaseContract.abi,
+        deployedNetwork.address
+      );
+
+
+
+      if (isAdoppted == false) {
+        await contract.methods
+        .updatePetAvailability(petIndex, false)
+        .send({ from: fromAddress, gas: 4000000 }); // Increase the gas limit
+
+
+
+        setIsAdopted(true)
+
+        
+
+      } else {
+        await contract.methods
+        .updatePetAvailability(petIndex, true)
+        .send({ from: fromAddress, gas: 4000000 }); // Increase the gas limit
+
+
+        setIsAdopted(false)
+      }
+
+      
+
+
+      console.log("Pet Adopted by " + fromAddress + " successfully"); // Log after successfully adding the pet
+      
+      // const contract2 = new web3.eth.Contract(
+      //   AdoptionContract.abi,
+      //   deployedNetwork.address
+      // );
+      // await contract2.methods
+      //   .adopt(petIndex)
+      //   .send({ from: fromAddress, gas: 4000000 }); // Increase the gas limit
+      
+    } catch (error) {
+      console.error("Error Adopting pet:", error);
+    }
+  }
+
+  const handleClickVote = async () => {
+    // try {
+    //   const web3 = new Web3(window.ethereum);
+    //   await window.ethereum.request({ method: "eth_requestAccounts" });
+
+    //   const accounts = await web3.eth.getAccounts();
+    //   const fromAddress = accounts[0];
+
+    //   const networkId = await web3.eth.net.getId();
+    //   const deployedNetwork = PetDatabaseContract.networks[networkId];
+    //   const contract = new web3.eth.Contract(
+    //     AdoptionContract.abi,
+    //     deployedNetwork.address
+    //   );
+    //   const result = await contract.methods
+    //     .adopt(key)
+    //     .send({ from: fromAddress, gas: 4000000 }); // Increase the gas limit
+
+    //   console.log(result);
+
+    //   console.log("Pet voted by" + fromAddress + " successfully"); // Log after successfully adding the pet
+    // } catch (error) {
+    //   console.error("Error voting for pet:", error);
+    // }
+  }
   return (
     <Box
       sx={{
@@ -108,6 +196,8 @@ function Card({ name, age, breed, image }) {
           variant="outlined"
           color="primary"
           sx={{ marginTop: "10px" }}
+          onClick={() => handleClickVote()}
+
         >
           Vote
         </Button>
@@ -117,8 +207,9 @@ function Card({ name, age, breed, image }) {
           variant="contained"
           color="secondary"
           sx={{ marginTop: "5px" }}
+          onClick={() => handleClickAdopt()}
         >
-          Adopt
+          {isAdoppted == false ? "Adopt" : "Return" }
         </Button>
       </div>
     </Box>

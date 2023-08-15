@@ -1,6 +1,9 @@
 //SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.19;
 
+
+// import "./Adoption.sol";
+
 contract PetDatabase {
     struct Pet {
         string name;
@@ -11,6 +14,10 @@ contract PetDatabase {
     }
 
     Pet[] public pets; // Array to store pets
+    uint petCount = 0;
+
+    // Adoption public adoptionContract; // Instance of the Adoption contract
+
 
     event PetAdded(
         uint256 indexed petId,
@@ -21,6 +28,16 @@ contract PetDatabase {
         string image // Updated event to include image
     );
 
+    address[16] public adopters;
+
+
+
+    function getAdopters() external view returns (address[16] memory) {
+        return adopters;
+    }
+
+
+
     // The following function adds a pet to the blockchain of pets [REQUIRES GAS]
     function addPet(
         string memory _name,
@@ -29,9 +46,9 @@ contract PetDatabase {
         string memory _image // New parameter for the image
     ) external {
         pets.push(Pet(_name, _age, _breed, true, _image)); // Push new pet to the array
-        uint256 petId = pets.length - 1; // Calculate the pet ID
+        petCount = petCount + 1;// Calculate the pet ID
 
-        emit PetAdded(petId, _name, _age, _breed, true, _image); // Emit the event
+        emit PetAdded(petCount, _name, _age, _breed, true, _image); // Emit the event
     }
 
     // The following function returns a single pet given a specific petId [DOES NOT REQUIRE GAS]
@@ -56,7 +73,13 @@ contract PetDatabase {
     // The following function returns an array of pet IDs that match the filtering criteria [DOES NOT REQUIRE GAS]
     function updatePetAvailability(uint256 _petId, bool _isAvailable) external {
         require(_petId < pets.length, "Invalid pet ID"); // Validate pet ID
+        if (_isAvailable) {
+            adopters[_petId] = address(0);
 
+        } else {
+            address adopter = msg.sender;
+            adopters[_petId] = adopter;
+        }
         pets[_petId].isAvailable = _isAvailable;
     }
 
