@@ -106,8 +106,10 @@ Follow these steps to set up and run the DApp locally:
 
 ## Team
 
-Vikram Narra
+Vikram Narra 
+
 Yashank Bhola
+
 Yuxuan Gao
 
 
