@@ -12,6 +12,7 @@ Welcome to the README for our Decentralized Application (DApp) built using Truff
 - [Version](#version)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Video](#video)
 - [Team](#team)
 
 ## Introduction
@@ -103,6 +104,10 @@ Follow these steps to set up and run the DApp locally:
    ```
 
 6. Access the DApp in your browser through the provided URL.
+
+## Video
+
+Video Link: https://youtu.be/FlABKUNQHY8
 
 ## Team
 
