@@ -6,7 +6,7 @@ import { SimpleGrid, Text } from '@chakra-ui/react'
 
 import "./Box.css";
 
-function ViewPets() {
+function Analytics() {
   const web3 = new Web3(window.ethereum);
 
   const [matchingPets, setMatchingPets] = useState([]);
@@ -25,14 +25,19 @@ function ViewPets() {
           PetDatabaseContract.abi,
           deployedNetwork.address
         );
-        contract.events.PetAdded({ fromBlock: 0 }, async (error, event) => { 
-            const result = await contract.methods.getAllPets().call({ from: fromAddress });
-            setMatchingPets(result);
-        });
+
         // Fetch updated pets
-        const result = await contract.methods.getAllPets().call({ from: fromAddress });
-        console.log(result)
-        setMatchingPets(result);
+        const result = await contract.methods.getPetsAdopted().call({ from: fromAddress });
+        console.log(result);
+        const randomArr = [];
+
+        for (let i = 0; i < result.length; i++) {
+            const temp = await contract.methods.getPet(result[i]).call({ from: fromAddress });
+            randomArr.push(temp);
+        }
+
+        setMatchingPets(randomArr);
+
       } catch (error) {
         console.error("Error loading pets:", error);
       }
@@ -51,7 +56,7 @@ function ViewPets() {
 
   return (
     <div>
-    <Text fontSize='4xl' as='b' margin='20px' >View All Pets:</Text>
+    <Text fontSize='4xl' as='b' margin='20px' >Adopted Pets:</Text>
     <SimpleGrid spacing={3} templateColumns='repeat(auto-fill, minmax(400px, 1fr))' margin='20px'>
         {matchingPets.map((pet, index) => (
             <CardBox
@@ -73,4 +78,4 @@ function ViewPets() {
   );
 }
 
-export default ViewPets;
+export default Analytics;
