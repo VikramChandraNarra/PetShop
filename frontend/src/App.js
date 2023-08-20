@@ -14,7 +14,7 @@ function App() {
   const [isOwner, setIsOwner] = useState(false)
   // Enable Ethereum account on component mount
   useEffect(() => {
-    localStorage.setItem("owner", "0xF52ba71b232bD3e3E0F9Df549328206631CdbA4d")
+    localStorage.setItem("owner", "0xF52ba71b232bD3e3E0F9Df549328206631CdbA4d") // Change this to your owner's address.
   }, []);
 
 

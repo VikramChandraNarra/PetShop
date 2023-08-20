@@ -1,62 +1,66 @@
+import { useEffect, useState } from 'react';
 import {
   Flex,
   Box,
-  FormControl,
-  FormLabel,
-  Input,
-  Checkbox,
-  Stack,
   Button,
   Heading,
-  Text,
   Image,
+  Stack,
   useColorModeValue,
-} from '@chakra-ui/react'
-
+} from '@chakra-ui/react';
+import Web3 from 'web3';
 import { useNavigate } from 'react-router-dom';
 
-
-import Web3 from 'web3';
-
-import React, { useState } from 'react';
-
-
 export default function SimpleCard({ setOwner }) {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [account, setAccount] = useState(null);
 
-    const [account, setAccount] = useState(null);
+  const getWeb3 = async () => {
+    if (window.ethereum) {
+      await window.ethereum.enable();
+      const web3 = new Web3(window.ethereum);
+      return web3;
+    }
+    return null;
+  };
 
-    const getWeb3 = async () => {
-      if (window.ethereum) {
-        await window.ethereum.enable();
-        const web3 = new Web3(window.ethereum);
-        return web3;
-      }
-      return null;
-    };
-  
-    const connectToMetaMask = async () => {
-      const web3 = await getWeb3();
-      if (web3) {
-        const accounts = await web3.eth.getAccounts();
-        setAccount(accounts[0]);
-        localStorage.setItem("address", accounts[0])
-        console.log(accounts)
-        if (accounts[0] == localStorage.getItem("owner")) {
-            setOwner(true)
-            navigate('/addpet')
-
-        } else {
-            setOwner(false)
-            
-            navigate('/view')
-
-        }
+  const connectToMetaMask = async () => {
+    const web3 = await getWeb3();
+    if (web3) {
+      const accounts = await web3.eth.getAccounts();
+      setAccount(accounts[0]);
+      localStorage.setItem('address', accounts[0]);
+      console.log(accounts);
+      if (accounts[0] === localStorage.getItem('owner')) {
+        setOwner(true);
+        navigate('/addpet');
       } else {
-        console.log("MetaMask not available");
-        localStorage.setItem("address", null)
+        setOwner(false);
+        navigate('/view');
+      }
+    } else {
+      console.log('MetaMask not available');
+      localStorage.setItem('address', null);
+    }
+  };
+
+  useEffect(() => {
+    const handleAccountsChanged = (newAccounts) => {
+      if (newAccounts.length > 0) {
+        setAccount(newAccounts[0]);
+      } else {
+        setAccount(null);
       }
     };
+
+    // Listen for MetaMask account changes
+    window.ethereum.on('accountsChanged', handleAccountsChanged);
+
+    // Cleanup when component unmounts
+    return () => {
+      window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+    };
+  }, []);
 
   return (
     <Flex
@@ -74,9 +78,7 @@ export default function SimpleCard({ setOwner }) {
           boxShadow={'lg'}
           p={8}>
           <Stack spacing={4}>
-
             <Stack spacing={10}>
-
               <Button
                 bg={'green.400'}
                 color={'white'}
@@ -92,5 +94,5 @@ export default function SimpleCard({ setOwner }) {
         </Box>
       </Stack>
     </Flex>
-  )
+  );
 }
