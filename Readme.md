@@ -12,6 +12,7 @@ Welcome to the README for our Decentralized Application (DApp) built using Truff
 - [Version](#version)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Features](#features)
 - [Video](#video)
 - [Team](#team)
 
@@ -104,6 +105,22 @@ Follow these steps to set up and run the DApp locally:
    ```
 
 6. Access the DApp in your browser through the provided URL.
+
+
+## Features
+
+Sign in ![Alt text](image.png)
+---
+Add a Pet ![Alt text](image-1.png)
+---
+View all Pet (Including Adopt and Like) ![Alt text](image-2.png)
+---
+Donate Ether ![Alt text](image-5.png)
+---
+Filter Adopted and Available Pets ![Alt text](image-3.png)
+---
+Ownership Tracking ![Alt text](image-4.png)
+
 
 ## Video
 
